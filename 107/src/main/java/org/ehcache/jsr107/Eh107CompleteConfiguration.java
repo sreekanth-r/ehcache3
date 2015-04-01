@@ -23,7 +23,6 @@ import javax.cache.configuration.CacheEntryListenerConfiguration;
 import javax.cache.configuration.CompleteConfiguration;
 import javax.cache.configuration.Configuration;
 import javax.cache.configuration.Factory;
-import javax.cache.expiry.Duration;
 import javax.cache.expiry.EternalExpiryPolicy;
 import javax.cache.expiry.ExpiryPolicy;
 import javax.cache.integration.CacheLoader;
@@ -47,8 +46,13 @@ class Eh107CompleteConfiguration<K, V> extends Eh107Configuration<K, V> implemen
   private final Factory<CacheLoader<K, V>> cacheLoaderFactory;
   private final Factory<CacheWriter<? super K, ? super V>> cacheWriterFactory;
   private final Factory<ExpiryPolicy> expiryPolicyFactory;
+  private final boolean useExpiryFromTemplate;
 
   Eh107CompleteConfiguration(Configuration<K, V> config) {
+    this(config, false);
+  }
+
+  Eh107CompleteConfiguration(Configuration<K, V> config, boolean useExpiryFromTemplate) {
     this.keyType = config.getKeyType();
     this.valueType = config.getValueType();
     this.isStoreByValue = config.isStoreByValue();
@@ -65,6 +69,11 @@ class Eh107CompleteConfiguration<K, V> extends Eh107Configuration<K, V> implemen
       for (CacheEntryListenerConfiguration<K, V> listenerConfig : completeConfig.getCacheEntryListenerConfigurations()) {
         cacheEntryListenerConfigs.add(listenerConfig);
       }
+      if(config instanceof Eh107CompleteConfiguration) {
+        this.useExpiryFromTemplate = ((Eh107CompleteConfiguration) config).useExpiryFromTemplate();
+      } else {
+        this.useExpiryFromTemplate = false;
+      }
     } else {
       this.isReadThrough = false;
       this.isWriteThrough = false;
@@ -73,6 +82,7 @@ class Eh107CompleteConfiguration<K, V> extends Eh107Configuration<K, V> implemen
       this.cacheLoaderFactory = null;
       this.cacheWriterFactory = null;
       this.expiryPolicyFactory = EternalExpiryPolicy.factoryOf();
+      this.useExpiryFromTemplate = useExpiryFromTemplate;
     }
   }
 
@@ -149,5 +159,9 @@ class Eh107CompleteConfiguration<K, V> extends Eh107Configuration<K, V> implemen
   @Override
   void removeCacheEntryListenerConfiguration(CacheEntryListenerConfiguration<K, V> listenerConfig) {
     this.cacheEntryListenerConfigs.remove(listenerConfig);
+  }
+
+  boolean useExpiryFromTemplate() {
+    return this.useExpiryFromTemplate;
   }
 }

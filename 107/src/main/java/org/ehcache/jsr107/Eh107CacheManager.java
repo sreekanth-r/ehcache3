@@ -142,7 +142,13 @@ class Eh107CacheManager implements CacheManager {
       }
 
       // copy the config (since it can be re-used per 107 spec)
-      Eh107CompleteConfiguration<K, V> completeConfig = new Eh107CompleteConfiguration<K, V>(config);
+      Eh107CompleteConfiguration<K, V> completeConfig;
+
+      if(config instanceof Eh107CompleteConfiguration) {
+        completeConfig = new Eh107CompleteConfiguration<K, V>(config,((Eh107CompleteConfiguration) config).useExpiryFromTemplate());
+      } else {
+        completeConfig = new Eh107CompleteConfiguration<K, V>(config);
+      }
 
       if (caches.containsKey(cacheName)) {
         throw new CacheException("A Cache named [" + cacheName + "] already exists");
@@ -162,6 +168,10 @@ class Eh107CacheManager implements CacheManager {
         MultiCacheException mce = new MultiCacheException(t);
         cacheResources.closeResources(mce);
         throw mce;
+      }
+
+      if(expiry == null) {
+        expiry = new EhcacheExpiryWrapper<K, V>(ehCache.getRuntimeConfiguration().getExpiry());
       }
 
       Eh107Cache<K, V> cache = null;
@@ -206,7 +216,10 @@ class Eh107CacheManager implements CacheManager {
     if (builder == null) {
       builder = CacheConfigurationBuilder.newCacheConfigurationBuilder();
     }
-    builder = builder.withExpiry(expiry);
+
+    if(expiry != null) {
+      builder = builder.withExpiry(expiry);
+    }
 
     OnHeapStoreServiceConfig onHeapStoreServiceConfig = builder.getExistingServiceConfiguration(OnHeapStoreServiceConfig.class);
     if (onHeapStoreServiceConfig == null) {

@@ -22,6 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.cache.Caching;
+import javax.cache.configuration.Configuration;
 import javax.cache.configuration.Factory;
 import javax.cache.configuration.MutableConfiguration;
 import javax.cache.expiry.CreatedExpiryPolicy;
@@ -82,6 +83,38 @@ public class Eh107JSRTemplateOverridingTest {
     javax.cache.Cache<Long, String> c2 = cm.createCache("c2", c2Conf);
     Eh107CompleteConfiguration<Long, String> cc2 = c2.getConfiguration(Eh107CompleteConfiguration.class);
     assertThat(cc2.getExpiryPolicyFactory(), is(factory));
+
+    Eh107CompleteConfiguration<Long, String> conf1 = new Eh107CompleteConfiguration<Long, String>(new Configuration<Long, String>() {
+      @Override
+      public Class<Long> getKeyType() {
+        return Long.class;
+      }
+
+      @Override
+      public Class<String> getValueType() {
+        return String.class;
+      }
+
+      @Override
+      public boolean isStoreByValue() {
+        return true;
+      }
+    }, true);
+
+    javax.cache.Cache<Long, String> c3 = cm.createCache("c3", conf1);
+
+    c3.put(1L, "abc");
+    c3.put(2L, "abc");
+
+    long mine = System.nanoTime();
+
+    while ((System.nanoTime() - mine) < 2) {
+      //expiry time should pass
+    }
+
+    assertThat(c3.get(1L), nullValue());
+    assertThat(c3.get(2L), nullValue());
+
   }
 
 
