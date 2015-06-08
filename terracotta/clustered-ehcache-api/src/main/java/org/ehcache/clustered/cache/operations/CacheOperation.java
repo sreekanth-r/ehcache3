@@ -14,5 +14,24 @@
  * limitations under the License.
  */
 
-include "api", "spi-tester", "core", "jmx", "core-spi-test", "impl", "107", "xml", "integration-test", "dist",
-        "demos/00-NoCache", "demos/01-CacheAside", "docs", "terracotta/clustered-ehcache", "terracotta/clustered-ehcache-api", "terracotta/clustered-ehcache-common", "terracotta/clustered-ehcache-server-impl", "terracotta/clustered-ehcache-distribution", "terracotta/clustered-ehcache-client-impl", "terracotta/clustered-ehcache-integration-test"
+package org.ehcache.clustered.cache.operations;
+
+/**
+ * 
+ * @author Abhilash
+ *
+ */
+
+public interface CacheOperation<K> extends ClusterOperation {
+
+  public enum Type {
+    GET, CONTAINS, PUT, PUT_IF_ABSENT, REMOVE, REMOVE_WITH_VALUE, REPLACE, REPLACE_WITH_TWO_VALUES, CLEAR
+  }
+
+  Type getCacheOperationType();
+
+  KeyWrapper<K> getKey();
+
+  byte[] getValue();
+
+}

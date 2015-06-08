@@ -14,5 +14,18 @@
  * limitations under the License.
  */
 
-include "api", "spi-tester", "core", "jmx", "core-spi-test", "impl", "107", "xml", "integration-test", "dist",
-        "demos/00-NoCache", "demos/01-CacheAside", "docs", "terracotta/clustered-ehcache", "terracotta/clustered-ehcache-api", "terracotta/clustered-ehcache-common", "terracotta/clustered-ehcache-server-impl", "terracotta/clustered-ehcache-distribution", "terracotta/clustered-ehcache-client-impl", "terracotta/clustered-ehcache-integration-test"
+package org.ehcache.clustered.cache;
+
+// An interface that defines the identifaction of cache as unique across the cluster
+// Right this would be alias of the cache
+
+/**
+ * 
+ * @author Abhilash
+ *
+ */
+
+public interface CacheIdentifier {
+
+  String getIdentifier();
+}

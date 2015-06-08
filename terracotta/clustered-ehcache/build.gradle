@@ -1,0 +1,6 @@
+
+dependencies {
+  compile project(':api'), project(':core'), project(':terracotta/clustered-ehcache-api')
+  compile group: 'org.terracotta', name: 'entity-client-api', version: parent.entityClientApi
+}
+

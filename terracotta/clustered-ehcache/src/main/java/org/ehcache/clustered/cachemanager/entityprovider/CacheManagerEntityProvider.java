@@ -14,5 +14,20 @@
  * limitations under the License.
  */
 
-include "api", "spi-tester", "core", "jmx", "core-spi-test", "impl", "107", "xml", "integration-test", "dist",
-        "demos/00-NoCache", "demos/01-CacheAside", "docs", "terracotta/clustered-ehcache", "terracotta/clustered-ehcache-api", "terracotta/clustered-ehcache-common", "terracotta/clustered-ehcache-server-impl", "terracotta/clustered-ehcache-distribution", "terracotta/clustered-ehcache-client-impl", "terracotta/clustered-ehcache-integration-test"
+package org.ehcache.clustered.cachemanager.entityprovider;
+
+import org.ehcache.clustered.entity.api.EhcacheManagerEntity;
+import org.ehcache.spi.service.Service;
+
+/**
+ * 
+ * @author Abhilash
+ *
+ */
+public interface CacheManagerEntityProvider extends Service {
+
+  EhcacheManagerEntity createCacheManagerEntity(String entityId);
+
+  void releaseCacheManagerEntity(String entityId);
+
+}
